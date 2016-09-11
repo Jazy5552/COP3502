@@ -23,6 +23,9 @@
 *.a
 *.lib
 
+# Swp
+*.swp
+
 # Executables
 #*.exe
 #*.out
