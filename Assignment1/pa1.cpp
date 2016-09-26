@@ -7,8 +7,10 @@ int main() {
 	int **square1, **square2, **square3;
 	int N;
 
-	cout << "Enter the size of the magic square: ";
+	do { //Safety for silly users
+	cout << "Enter the size of the magic square (3 - 15): ";
 	cin >> N;
+	} while ((N % 2) == 0 || N > 15 || N < 3);
 
 	square1 = createMagicSquare(N);
 	square2 = createVMirMagicSquare(square1, N); //Cheeky
