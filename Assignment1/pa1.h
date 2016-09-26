@@ -6,9 +6,9 @@
 //Create a magic square of NxN dimensions using the Siamese method 
 //and return through int** (2 dimensional array). 
 //Function will dynamically allocate memory so remember to delete it later!
-int** createMagicSquare(int N) {
+int **createMagicSquare(int N) {
 	//Create the NxN array
-	int** arr = new int*[N];
+	int **arr = new int*[N];
 	for (int i=0; i<N; i++) {
 		arr[i] = new int[N];
 	}
@@ -49,21 +49,91 @@ int** createMagicSquare(int N) {
 	return arr;
 }
 
-//TODO Returns a new 2d array of size NxN that is a rotated version of the one given
-//in clockwise rotation
-int** createRotMagicSquare(int** arr, int N) {
+//Returns a new 2d array of size NxN that is a mirrored version of the one given
+//over the vertical
+int **createVMirMagicSquare(int **arr, int N) {
+	//Create the new array
+	int **nArr = new int*[N];
+	for (int i=0; i<N; i++) {
+		nArr[i] = new int[N];
+	}
+
+	int tmp;
+	for (int i=0; i<N; i++) {
+		//i = row number
+		for (int j=0; j<(N/2)+1; j++) {
+			//j = col number
+			nArr[i][j] = arr[i][N-j-1];
+			nArr[i][N-j-1] = arr[i][j];
+		}
+	}
+	return nArr;
+}
+
+//Returns a new 2d array of size NxN that is a mirrored version of the one given
+//over the horizontal
+int **createHMirMagicSquare(int **arr, int N) {
+	//Create the new array
+	int **nArr = new int*[N];
+	for (int i=0; i<N; i++) {
+		nArr[i] = new int[N];
+	}
+
+	int tmp;
+	for (int i=0; i<N; i++) {
+		//i = col number
+		for (int j=0; j<(N/2)+1; j++) {
+			//j = row number
+			nArr[j][i] = arr[N-j-1][i];
+			nArr[N-j-1][i] = arr[j][i];
+		}
+	}
+	return nArr;
+}
+
+//Prints the sum of every row individually
+void printRowSums(int **arr, int N) {
+	for (int i=0; i<N; i++) {
+		int sum = 0;
+		for (int j=0; j<N; j++) {
+			sum += arr[i][j];
+		}
+		printf("%d ", sum);
+	}
+}
+
+//Prints the sum of every col individually
+void printColSums(int **arr, int N) {
+	for (int i=0; i<N; i++) {
+		int sum = 0;
+		for (int j=0; j<N; j++) {
+			sum += arr[j][i];
+		}
+		printf("%d ", sum);
+	}
 
 }
 
-//TODO Returns a new 2d array of size NxN that is a mirrored version of the one given
-//over the horizontal
-int ** createMirMagicSquare(int** arr, int N) {
+//Prints the sum of every diagonal individually
+void printDiagSums(int **arr, int N) {
+	int sum = 0;
+	//Print the \ diagonal
+	for (int i=0; i<N; i++) {
+		sum += arr[i][i];
+	}
+	printf("%d ", sum);
 
+	sum = 0;
+	//Print the / diagonal
+	for (int i=0,j=(N-1); i<N; i++,j--) {
+		sum += arr[i][j];
+	}
+	printf("%d ", sum);
 }
 
 //Prints the magic square
 //NOTE: Maybe I should make this return a string? Leave the printing for main
-void printMagicSquare(int** arr, int N) {
+void printMagicSquare(int **arr, int N) {
 	for (int i=0; i<N; i++) {
 		for (int j=0; j<N; j++) {
 			printf("%d\t", arr[i][j]);
@@ -72,7 +142,7 @@ void printMagicSquare(int** arr, int N) {
 	}
 }
 
-void delete2DArray(int** arr, int N) {
+void delete2DArray(int **arr, int N) {
 	for (int i=0; i<N; i++) {
 		delete[] arr[i];
 	}
