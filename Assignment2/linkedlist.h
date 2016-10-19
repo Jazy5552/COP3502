@@ -1,5 +1,7 @@
-#ifndef LINKEDLIST_HPP
-#define LINKEDLIST_HPP
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
+#include "node.h"
+#include <string>
 
 /*
  *	TODO Description here
@@ -25,9 +27,9 @@ public:
 	void insert(Node *node, int pos); 
 
 	// Delete the node (Will search list for it, returns success)
-	bool delete(Node *node); 
+	bool remove(Node *node); 
 	// Delete the node at the pos position
-	void delete(int pos); 
+	void remove(int pos); 
 
 	// Replace the old node (node) with the newNode
 	void replace(Node *node, Node *newNode);
@@ -40,14 +42,6 @@ public:
 	//Get the node at the given pos
 	Node* operator[](int pos);
 	
-}
+};
 
-struct Node { // Custom node for this assignment
-	std::string pName; // Name of the process using this node block
-	bool free; // Wether the node is being used or not at the moment
-	int blockSize; // Number of 4k blocks pertaining to this node.
-	Node *next;
-}
-
-
-#endif // LINKEDLIST_HPP
+#endif // LINKEDLIST_H
