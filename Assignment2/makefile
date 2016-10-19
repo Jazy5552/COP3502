@@ -3,15 +3,15 @@ CC = g++
 #	-g adds debugging information to executable
 #	-Wall shows most warnings
 CFLAGS = -g -Wall
-TARGET = assignment2
+TARGET = assignment2.out
 
 default: $(TARGET)
 
-$(TARGET): $(TARGET).cpp linkedlist.o
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).cpp linkedlist.o
+$(TARGET): pa2.o linkedlist.o
+	$(CC) $(CFLAGS) -o $(TARGET) $^
 
-linkedlist.o: linkedlist.cpp linkedlist.h
-	$(CC) $(CFLAGS) -o linkedlist.o linkedlist.cpp
+%.o: %.cpp
+	$(CC) $(CFLAGS) -o $@ -c $^
 
 clean:
 	$(RM) $(TARGET) *.o
