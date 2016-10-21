@@ -8,8 +8,11 @@ typedef struct NodeData {
 	bool free; // Wether the node is being used or not at the moment
 	int blockSize; // Number of 4k blocks pertaining to this node.
 
-	//Constructor
-	NodeData(std::string name, bool f, int bs) : pName(name), free(f), blockSize(bs) {}
+	//Constructors
+	NodeData() 
+		: pName(""), free(false), blockSize(0) {}
+	NodeData(std::string name, bool f, int bs) 
+		: pName(name), free(f), blockSize(bs) {}
 
 	// Overload for comparing NodeDatas
 	// @Overload
