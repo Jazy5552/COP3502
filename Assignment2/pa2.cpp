@@ -160,22 +160,24 @@ void killProgram(LinkedList *ll) {
 	cout << "Program " << hitList << " successfully killed, "
 		<< size << " page" << suf << " reclaimed." << endl;
 }
+
 void printFragments(LinkedList *ll) {
 	collapseFreeMem(ll); //Make sure all the Frees are joined
 	int fragments = 0;
-	for (int i=0; i<ll->getSize(); i++) {
+	for (int i=0; i < ll->getSize(); i++) {
 		if ((*ll)[i].free == false) {
 			fragments++;
-			while ((*ll)[i].free == false && i < ll->getSize()) {
 				//Fast forward through all the non frees
+			do {
 				i++;
-			}
+			} while (i < ll->getSize() && (*ll)[i].free == false);
 		}
 	}
 	
 	string suf = (fragments == 0 || fragments > 1) ? "s" : "";
 	cout << "There are " << fragments << " frament" << suf << "." << endl;
 }
+
 void printMemory(LinkedList *ll) {
 	//This function will print the linkedlist in a special way
 	//In a 4x8 grid
