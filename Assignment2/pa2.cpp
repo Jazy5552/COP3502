@@ -8,6 +8,7 @@
 #define FRAG 3
 #define PRINT 4
 #define QUIT 5
+#define DEBUG 0
 
 
 using namespace std;
@@ -66,12 +67,13 @@ int main(int argc, char **args) {
 		} else if (n == KILL) {
 			killProgram(ll);
 		} else if (n == FRAG) {
-			//TODO
-			ll->printList();
+			printFragments(ll);
 		} else if (n == PRINT) {
 			printMemory(ll);
 		} else if (n == QUIT) {
 			//Nothing?
+		} else if (n == DEBUG) {
+			ll->printList();
 		} else {
 			//Invalid input?
 			cout << "Invalid input" << endl; //Dat consistency
@@ -95,11 +97,14 @@ void addProgram(LinkedList *ll, int (*algo)(LinkedList *, int)) {
 	cout << "Program size (KB): ";
 	cin >> blockSize;
 
-	//Check for duplicate
+	//Check for duplicate or 0 size?
 	if (ll->search(pName) >= 0) {
 		//pName already exists!!!
 		cout << "Error, Program " << pName << " already running." << endl;
 		return;
+	} else if (blockSize < 1) {
+		//What are you trying to start there?
+		cout << "Error, Program " << pName << " must have a positive size." << endl;
 	}
 
 	//Create the package
@@ -113,6 +118,9 @@ void addProgram(LinkedList *ll, int (*algo)(LinkedList *, int)) {
 		return;
 	}
 
+	//Modify the Free space
+	(*ll)[pos].blockSize -= blockSize;
+
 	//Store package away
 	ll->insert(n, pos);
 
@@ -122,8 +130,8 @@ void addProgram(LinkedList *ll, int (*algo)(LinkedList *, int)) {
 		<< blockSize << " page" << suf
 		<< " used." << endl;
 }
+
 void killProgram(LinkedList *ll) {
-	//TODO
 	string hitList;
 	int size;
 	int i;
@@ -153,7 +161,20 @@ void killProgram(LinkedList *ll) {
 		<< size << " page" << suf << " reclaimed." << endl;
 }
 void printFragments(LinkedList *ll) {
-	//TODO
+	collapseFreeMem(ll); //Make sure all the Frees are joined
+	int fragments = 0;
+	for (int i=0; i<ll->getSize(); i++) {
+		if ((*ll)[i].free == false) {
+			fragments++;
+			while ((*ll)[i].free == false && i < ll->getSize()) {
+				//Fast forward through all the non frees
+				i++;
+			}
+		}
+	}
+	
+	string suf = (fragments == 0 || fragments > 1) ? "s" : "";
+	cout << "There are " << fragments << " frament" << suf << "." << endl;
 }
 void printMemory(LinkedList *ll) {
 	//This function will print the linkedlist in a special way
@@ -174,24 +195,46 @@ void printMemory(LinkedList *ll) {
 
 // Find the best fit using the best fit algorithm
 // Returns the position in the linkedlist where the size will fit BEST
-// NOTE: Function will also clear the appropriate Free space!
 int findBestFit(LinkedList *ll, int size) {
-	//TODO
-	//TODO Clear free space
-	int i = ll->search(FREE);
-	(*ll)[i].blockSize = (*ll)[i].blockSize - size;
-	return 0;
+	collapseFreeMem(ll); //Make sure all the Frees are joined
+
+	int spot = -1; //Will hold the position of the smallest Free
+	int minFound = MEMSIZE+1; //Will hold the value of the smallest Free possible spot
+	
+	for (int i=0; i<ll->getSize(); i++) {
+		if ((*ll)[i].free) {
+			int freeSize = (*ll)[i].blockSize;
+			if (freeSize < minFound && freeSize >= size) {
+				//The program fits in this free spot and it is a new min
+				spot = i;
+				minFound = freeSize;
+			}
+		}
+	}
+	
+	return spot;
 }
 
 // Find the worst fit using the worst fit algorithm
 // Returns the position in the linkedlist where the size will fit WORST
-// NOTE: Function will also clear the appropriate Free space!
 int findWorstFit(LinkedList *ll, int size) {
-	//TODO
-	//TODO Clear free space
-	int i = ll->search(FREE);
-	(*ll)[i].blockSize = (*ll)[i].blockSize - size;
-	return 0;
+	collapseFreeMem(ll); //Make sure all the Frees are joined
+
+	int spot = -1; //Will hold the position of the largest Free
+	int maxFound = -1; //Will hold the value of the largest Free possible spot
+	
+	for (int i=0; i<ll->getSize(); i++) {
+		if ((*ll)[i].free) {
+			int freeSize = (*ll)[i].blockSize;
+			if (freeSize > maxFound && freeSize >= size) {
+				//The program fits in this free spot and it is a new min
+				spot = i;
+				maxFound = freeSize;
+			}
+		}
+	}
+	
+	return spot;
 }
 
 // Will collapse adjacent Free spaces
@@ -211,6 +254,12 @@ void collapseFreeMem(LinkedList *ll) {
 				//Til death do ye part
 				ll->remove(j);
 			}
+			//If the free space is empty then just get rid of it
+			if (curr->blockSize < 1) {
+				// <1? You are a savage
+				ll->remove(i);
+			}
 		}
 	}
 }
+
