@@ -6,7 +6,7 @@ CFLAGS = -g -Wall
 TARGET = assignment3.out
 SOURCES = $(wildcard *.cpp)
 #Objects will just be all the sources files
-OBJECTS = $(patsubtr %.cpp,%.o,$(SOURCES))
+OBJECTS = $(SOURCES:%.cpp=%.o)
 
 default: $(TARGET)
 
@@ -15,6 +15,9 @@ $(TARGET): $(OBJECTS)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -o $@ -c $^
+
+phony:
+	echo $(SOURCES)
 
 clean:
 	$(RM) $(TARGET) *.o
